@@ -2,18 +2,24 @@ import React, { useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 
-// const SERVER_URL = "http://localhost:8080";
-const SERVER_URL = "https://resilientsystems-loan-calculator.onrender.com";
+const SERVER_URL = "http://localhost:8080";
+// const SERVER_URL = "https://resilientsystems-loan-calculator.onrender.com";
+
+const defaultFormFields = {
+  principal: 0,
+  interestRate: 0,
+  periodInYears: 0
+}
 
 const App = () => {
-  const [principal, setPrincipal] = useState("");
-  const [interestRate, setInterestRate] = useState("");
-  const [periodInYears, setPeriodInYears] = useState("");
   const [results, setResults] = useState(null);
   const [calculateLoanErrors, setCalculateLoanErrors] = useState(null);
   const [message, setMessage] = useState("");
   const [calculating, setCalculating] = useState(false);
   const [calculationSuccess, setCalculationSuccess] = useState(false);
+
+  const [formFields, setFormFields] = useState(defaultFormFields);
+  const { principal, interestRate, periodInYears} = formFields;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -55,6 +61,14 @@ const App = () => {
 
   };
 
+  const handleChange = (event) => {
+    setMessage("");
+    setResults(null);    
+
+    const {name, value} = event.target;
+    setFormFields({...formFields, [name]: value});    
+}
+
   return (
     <div className="container mt-5">
       <h1 className="text-center mb-4">Loan Calculator</h1>
@@ -74,8 +88,9 @@ const App = () => {
             id="principal"
             type="number"
             className="form-control"
+            name="principal"
             value={principal}
-            onChange={(e) => setPrincipal(e.target.value)}
+            onChange={handleChange}
             required
           />
           {calculateLoanErrors?.principal && (
@@ -88,8 +103,9 @@ const App = () => {
             id="interestRate"
             type="number"
             className="form-control"
+            name="interestRate"
             value={interestRate}
-            onChange={(e) => setInterestRate(e.target.value)}
+            onChange={handleChange}
             required
           />
           {calculateLoanErrors?.interestRate && (
@@ -102,8 +118,9 @@ const App = () => {
             id="periodInYears"
             type="number"
             className="form-control"
+            name="periodInYears"
             value={periodInYears}
-            onChange={(e) => setPeriodInYears(e.target.value)}
+            onChange={handleChange}
             required
           />
           {calculateLoanErrors?.periodInYears && (
