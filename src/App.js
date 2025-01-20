@@ -9,23 +9,46 @@ const App = () => {
   const [results, setResults] = useState(null);
   const [calculateLoanErrors, setCalculateLoanErrors] = useState(null);
   const [message, setMessage] = useState("");
+  const [calculating, setCalculating] = useState(false);
+  const [calculationSuccess, setCalculationSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (calculating) {
+      return;
+    }
+
+    setCalculating(true);
+    setMessage("");
+    setCalculateLoanErrors(null);
+    setCalculationSuccess(false);
+
     try {
-      const response = await axios.post("http://localhost:8080/api/loan/calculate", {
+      const response = await axios.post("https://resilientsystems-loan-calculator.onrender.com/api/loan/calculate", {
         principal: parseFloat(principal),
         interestRate: parseFloat(interestRate),
         periodInYears: parseInt(periodInYears, 10),
       });
       setMessage(response.data.message);
       setResults(response.data.data);
+
+      setCalculationSuccess(response.data.success);
+      setCalculating(false);
       setCalculateLoanErrors(null); // Clear errors on success
     } catch (error) {
-      setMessage(error.response.data.message);
-      setCalculateLoanErrors(error.response.data.errors);
+      setCalculating(false);
+      setCalculationSuccess(false);
+
+      if (error.response) {
+        setCalculateLoanErrors(error.response.data.errors);
+        setMessage(error.response.data.message);
+        
+      }else{
+        setMessage("An error occurred while calculating the loan.");
+      }
     }
+
   };
 
   return (
@@ -34,7 +57,7 @@ const App = () => {
       {message && (
         <div className="row">
           <div className="col-12">
-            <div className={calculateLoanErrors ? "alert alert-danger" : "alert alert-success"} role="alert">
+            <div className={calculationSuccess ? "alert alert-success" : "alert alert-danger"} role="alert">
               {message}
             </div>
           </div>
@@ -83,7 +106,7 @@ const App = () => {
             <small className="text-danger">{calculateLoanErrors.periodInYears}</small>
           )}
         </div>
-        <button type="submit" className="btn btn-primary w-100">Calculate</button>
+        <button type="submit" className="btn btn-primary w-100" disabled={calculating}>{calculating ? "Calculating..." : "Calculate"}</button>
       </form>
 
       {results && (
