@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 
-const SERVER_URL = "http://localhost:8080";
-// const SERVER_URL = "https://resilientsystems-loan-calculator.onrender.com";
+// const SERVER_URL = "http://localhost:8080";
+const SERVER_URL = "https://resilientsystems-loan-calculator.onrender.com";
 
 const defaultFormFields = {
   principal: 0,
