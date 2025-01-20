@@ -26,6 +26,7 @@ const App = () => {
     setMessage("");
     setCalculateLoanErrors(null);
     setCalculationSuccess(false);
+    setResults(null);
 
     try {
       const response = await axios.post(SERVER_URL + "/api/loan/calculate", {
