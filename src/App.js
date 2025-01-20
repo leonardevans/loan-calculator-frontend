@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
 
+// const SERVER_URL = "http://localhost:8080";
+const SERVER_URL = "https://resilientsystems-loan-calculator.onrender.com";
+
 const App = () => {
   const [principal, setPrincipal] = useState("");
   const [interestRate, setInterestRate] = useState("");
@@ -25,7 +28,7 @@ const App = () => {
     setCalculationSuccess(false);
 
     try {
-      const response = await axios.post("https://resilientsystems-loan-calculator.onrender.com/api/loan/calculate", {
+      const response = await axios.post(SERVER_URL + "/api/loan/calculate", {
         principal: parseFloat(principal),
         interestRate: parseFloat(interestRate),
         periodInYears: parseInt(periodInYears, 10),
@@ -113,9 +116,11 @@ const App = () => {
         <div className="card">
           <div className="card-body">
             <h2 className="card-title">Results</h2>
-            <p className="card-text">Monthly Payment: ${results.monthlyPayment.toFixed(2)}</p>
             <p className="card-text">Weekly Payment: ${results.weeklyPayment.toFixed(2)}</p>
+            <p className="card-text">Monthly Payment: ${results.monthlyPayment.toFixed(2)}</p>
             <p className="card-text">Yearly Payment: ${results.yearlyPayment.toFixed(2)}</p>
+            <p className="card-text">Total Repayment: ${(results.yearlyPayment * periodInYears).toFixed(2)}</p>
+            <p className="card-text">Total Interest: ${((results.yearlyPayment * periodInYears) - principal).toFixed(2)}</p>
           </div>
         </div>
       )}
